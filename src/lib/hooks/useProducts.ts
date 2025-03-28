@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Product } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);

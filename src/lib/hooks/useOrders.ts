@@ -5,7 +5,7 @@ import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Order, OrderStatus, Product } from '@/lib/types';
 import { useCart } from './useCart';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -42,14 +42,36 @@ export function useOrders() {
       
       const fetchedOrders: Order[] = [];
       for (const orderDoc of querySnapshot.docs) {
-        const orderData = orderDoc.data();
+        const orderData = orderDoc.data() as {
+          userId: string;
+          items: Array<{
+            id: string;
+            productId: string;
+            quantity: number;
+            price: number;
+          }>;
+          total: number;
+          status: OrderStatus;
+          createdAt: any;
+          updatedAt: any;
+        };
         
         // Fetch product details for each order item
         const itemsWithProducts = [];
         for (const item of orderData.items || []) {
           const productDoc = await getDoc(doc(db, 'products', item.productId));
           if (productDoc.exists()) {
-            const productData = productDoc.data();
+            const productData = productDoc.data() as {
+              name: string;
+              description: string;
+              price: number;
+              stockQuantity: number;
+              category: string;
+              imageUrl?: string;
+              createdAt: any;
+              updatedAt: any;
+            };
+            
             const product: Product = {
               id: productDoc.id,
               name: productData.name,

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useProducts } from '@/lib/hooks/useProducts';
 import { useCart } from '@/lib/hooks/useCart';
 import { useAuth } from '@/contexts/AuthContext';
-import { ShoppingCart, Search, Filter } from 'lucide-react';
+import { ShoppingCart, Search, Filter, Package } from 'lucide-react';
 
 export default function Products() {
   const { products, loading } = useProducts();

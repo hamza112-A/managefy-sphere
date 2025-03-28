@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { 
   User, 
@@ -10,7 +9,7 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 type UserRole = 'general' | 'user' | 'manager';
 
@@ -62,7 +61,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               role: userData.role
             });
           } else {
-            // If no user document exists, create one with default role
             const newUserData = {
               email: user.email,
               displayName: user.displayName,
@@ -93,10 +91,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      // Update profile with display name
       await updateProfile(user, { displayName: name });
       
-      // Create user document with default role
       await setDoc(doc(db, 'users', user.uid), {
         email: email,
         displayName: name,

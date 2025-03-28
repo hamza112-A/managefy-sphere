@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Cart, CartItem, Product } from '@/lib/types';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 export function useCart() {
   const [cart, setCart] = useState<Cart | null>(null);
