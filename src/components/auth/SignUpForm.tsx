@@ -8,14 +8,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserPlus } from 'lucide-react';
+import { UserRole } from '@/lib/types';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
   email: z.string().email({ message: 'Please enter a valid email' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
   confirmPassword: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  role: z.enum(['user', 'manager']).default('user'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -34,12 +37,13 @@ export function SignUpForm() {
       email: '',
       password: '',
       confirmPassword: '',
+      role: 'user',
     },
   });
 
   const onSubmit = async (values: FormValues) => {
     try {
-      await signUp(values.email, values.password, values.name);
+      await signUp(values.email, values.password, values.name, values.role as UserRole);
       navigate('/dashboard');
     } catch (error) {
       // Error is already handled in the signUp function
@@ -104,6 +108,30 @@ export function SignUpForm() {
                   <FormControl>
                     <Input type="password" placeholder="••••••" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Account Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an account type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="user">Regular User</SelectItem>
+                      <SelectItem value="manager">Manager</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

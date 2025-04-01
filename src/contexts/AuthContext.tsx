@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { 
   User, 
@@ -10,8 +11,7 @@ import {
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { toast } from 'sonner';
-
-type UserRole = 'general' | 'user' | 'manager';
+import { UserRole } from '@/lib/types';
 
 interface UserData {
   uid: string;
@@ -24,7 +24,7 @@ interface AuthContextType {
   currentUser: User | null;
   userData: UserData | null;
   loading: boolean;
-  signUp: (email: string, password: string, name: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string, role?: UserRole) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   getUserRole: () => UserRole;
@@ -86,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe;
   }, []);
 
-  const signUp = async (email: string, password: string, name: string) => {
+  const signUp = async (email: string, password: string, name: string, role: UserRole = 'user') => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await setDoc(doc(db, 'users', user.uid), {
         email: email,
         displayName: name,
-        role: 'user' as UserRole
+        role: role
       });
       
       toast.success('Account created successfully!');
