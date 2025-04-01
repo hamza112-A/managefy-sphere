@@ -47,23 +47,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log('Auth state changed - Current user:', user?.email);
       setCurrentUser(user);
       
       if (user) {
         try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDoc = await getDoc(userDocRef);
+          
+          console.log('Fetched user document:', userDoc.exists() ? 'exists' : 'does not exist');
+          
           if (userDoc.exists()) {
             const userDocData = userDoc.data();
-            // Ensure we're properly reading the role from Firestore
-            setUserData({
+            console.log('User document data:', userDocData);
+            
+            // Explicitly verify we're getting the role
+            const userRole = userDocData.role || 'user';
+            console.log('User role from Firestore:', userRole);
+            
+            const userData = {
               uid: user.uid,
               email: user.email,
               displayName: user.displayName,
-              role: userDocData.role || 'user'
-            });
-            console.log('User role from Firestore:', userDocData.role);
+              role: userRole
+            };
+            
+            setUserData(userData);
+            console.log('UserData state set to:', userData);
           } else {
             // This is a fallback if the user document doesn't exist
+            console.log('User document does not exist, creating default user document');
             const newUserData = {
               email: user.email,
               displayName: user.displayName,
@@ -103,8 +116,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         role: role
       };
       
+      console.log('Creating user with role:', role);
       await setDoc(doc(db, 'users', user.uid), userData);
       console.log('User created with role:', role);
+      
+      // Force update userData state
+      setUserData({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        role: role
+      });
       
       toast.success('Account created successfully!');
     } catch (error: any) {
@@ -145,9 +167,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getUserRole = (): UserRole => {
-    if (!userData) return 'general';
-    // Make sure we're returning the actual role from userData
-    console.log('Current user role:', userData.role);
+    if (!userData) {
+      console.log('getUserRole: userData is null, returning "general"');
+      return 'general';
+    }
+    
+    console.log('getUserRole called, returning:', userData.role);
     return userData.role;
   };
 

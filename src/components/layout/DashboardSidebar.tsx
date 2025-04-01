@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -14,24 +14,27 @@ import {
   BarChart, 
   Settings 
 } from 'lucide-react';
+import { UserRole } from '@/lib/types';
 
 interface SidebarLink {
   title: string;
   href: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  roles: string[];
+  roles: UserRole[];
 }
 
 export default function DashboardSidebar() {
   const { pathname } = useLocation();
   const { userData, getUserRole } = useAuth();
-  const userRole = getUserRole();
+  const [userRole, setUserRole] = useState<UserRole>('user');
   
-  // Log the role for debugging
+  // Update user role whenever userData changes
   useEffect(() => {
-    console.log('Dashboard sidebar - User role:', userRole);
+    const role = getUserRole();
+    console.log('Dashboard sidebar - getUserRole returned:', role);
     console.log('Dashboard sidebar - User data:', userData);
-  }, [userRole, userData]);
+    setUserRole(role);
+  }, [userData, getUserRole]);
 
   const links: SidebarLink[] = [
     {
@@ -90,9 +93,12 @@ export default function DashboardSidebar() {
     },
   ];
 
+  // Filter links based on user role
   const filteredLinks = links.filter(link => 
-    link.roles.includes(userRole)
+    link.roles.includes(userRole as UserRole)
   );
+
+  console.log('Filtered links for role', userRole, ':', filteredLinks.map(l => l.title));
 
   return (
     <div className="flex flex-col h-screen border-r">
