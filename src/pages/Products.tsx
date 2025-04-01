@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { useProducts } from '@/lib/hooks/useProducts';
 import { useCart } from '@/lib/hooks/useCart';
 import { useAuth } from '@/contexts/AuthContext';
-import { ShoppingCart, Search, Filter, Package } from 'lucide-react';
+import { ShoppingCart, Search, Package } from 'lucide-react';
+import ProductSeeder from '@/utils/ProductSeeder';
 
 export default function Products() {
   const { products, loading } = useProducts();
@@ -77,6 +79,12 @@ export default function Products() {
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <p>Loading products...</p>
+        </div>
+      ) : filteredProducts.length === 0 && products.length === 0 ? (
+        <div className="text-center py-10">
+          <ProductSeeder />
+          <h3 className="text-lg font-medium">No products found</h3>
+          <p className="text-muted-foreground">Products will appear here once they are added to the database</p>
         </div>
       ) : filteredProducts.length === 0 ? (
         <div className="text-center py-10">
