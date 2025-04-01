@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -24,8 +24,14 @@ interface SidebarLink {
 
 export default function DashboardSidebar() {
   const { pathname } = useLocation();
-  const { getUserRole } = useAuth();
+  const { userData, getUserRole } = useAuth();
   const userRole = getUserRole();
+  
+  // Log the role for debugging
+  useEffect(() => {
+    console.log('Dashboard sidebar - User role:', userRole);
+    console.log('Dashboard sidebar - User data:', userData);
+  }, [userRole, userData]);
 
   const links: SidebarLink[] = [
     {

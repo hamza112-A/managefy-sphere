@@ -53,14 +53,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
-            const userData = userDoc.data() as Omit<UserData, 'uid'>;
+            const userDocData = userDoc.data();
+            // Ensure we're properly reading the role from Firestore
             setUserData({
               uid: user.uid,
               email: user.email,
               displayName: user.displayName,
-              role: userData.role
+              role: userDocData.role || 'user'
             });
+            console.log('User role from Firestore:', userDocData.role);
           } else {
+            // This is a fallback if the user document doesn't exist
             const newUserData = {
               email: user.email,
               displayName: user.displayName,
@@ -93,11 +96,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       await updateProfile(user, { displayName: name });
       
-      await setDoc(doc(db, 'users', user.uid), {
+      // Make sure we're explicitly setting the role in Firestore
+      const userData = {
         email: email,
         displayName: name,
         role: role
-      });
+      };
+      
+      await setDoc(doc(db, 'users', user.uid), userData);
+      console.log('User created with role:', role);
       
       toast.success('Account created successfully!');
     } catch (error: any) {
@@ -138,7 +145,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getUserRole = (): UserRole => {
-    return userData?.role || 'general';
+    if (!userData) return 'general';
+    // Make sure we're returning the actual role from userData
+    console.log('Current user role:', userData.role);
+    return userData.role;
   };
 
   const value = {
