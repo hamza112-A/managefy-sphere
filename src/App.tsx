@@ -13,6 +13,14 @@ import SignIn from "@/pages/SignIn";
 import SignUp from "@/pages/SignUp";
 import Dashboard from "@/pages/Dashboard";
 import NotFound from "@/pages/NotFound";
+import ProductsPage from "@/pages/dashboard/ProductsPage";
+import CartPage from "@/pages/dashboard/CartPage";
+import OrdersPage from "@/pages/dashboard/OrdersPage";
+import InventoryPage from "@/pages/dashboard/InventoryPage";
+import UsersPage from "@/pages/dashboard/UsersPage";
+import AlertsPage from "@/pages/dashboard/AlertsPage";
+import ReportsPage from "@/pages/dashboard/ReportsPage";
+import SettingsPage from "@/pages/dashboard/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +40,14 @@ const App = () => (
             </Route>
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Dashboard />} />
-              {/* Additional dashboard routes will go here */}
+              <Route path="products" element={<ProductsPage />} />
+              <Route path="cart" element={<CartPage />} />
+              <Route path="orders" element={<OrdersPage />} />
+              <Route path="inventory" element={<InventoryPage />} />
+              <Route path="users" element={<UsersPage />} />
+              <Route path="alerts" element={<AlertsPage />} />
+              <Route path="reports" element={<ReportsPage />} />
+              <Route path="settings" element={<SettingsPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
