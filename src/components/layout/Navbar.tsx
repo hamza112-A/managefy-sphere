@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+"use client"
+import { Link, useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,22 +8,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useAuth } from '@/contexts/AuthContext';
-import { ShoppingCart, LogOut, User, LayoutDashboard, Package, LogIn, UserPlus } from 'lucide-react';
+} from "@/components/ui/dropdown-menu"
+import { useAuth } from "@/contexts/AuthContext"
+import { ShoppingCart, LogOut, User, LayoutDashboard, Package, LogIn, UserPlus } from "lucide-react"
 
 export default function Navbar() {
-  const { currentUser, userData, signOut } = useAuth();
-  const navigate = useNavigate();
+  const { currentUser, userData, signOut } = useAuth()
+  const navigate = useNavigate()
 
   const handleSignOut = async () => {
     try {
-      await signOut();
-      navigate('/');
+      await signOut()
+      navigate("/")
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error)
     }
-  };
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
@@ -53,7 +52,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           {currentUser ? (
             <>
-              <Button variant="ghost" size="icon" onClick={() => navigate('/cart')}>
+              <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard/cart")}>
                 <ShoppingCart className="h-5 w-5" />
               </Button>
               <DropdownMenu>
@@ -63,14 +62,12 @@ export default function Navbar() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>
-                    {userData?.displayName || currentUser.email}
-                  </DropdownMenuLabel>
+                  <DropdownMenuLabel>{userData?.displayName || currentUser.email}</DropdownMenuLabel>
                   <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-                    Role: {userData?.role || 'user'}
+                    Role: {userData?.role || "user"}
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")}>
                     <LayoutDashboard className="h-4 w-4 mr-2" />
                     Dashboard
                   </DropdownMenuItem>
@@ -83,11 +80,11 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Button variant="ghost" onClick={() => navigate('/signin')}>
+              <Button variant="ghost" onClick={() => navigate("/signin")}>
                 <LogIn className="h-4 w-4 mr-2" />
                 Sign In
               </Button>
-              <Button onClick={() => navigate('/signup')}>
+              <Button onClick={() => navigate("/signup")}>
                 <UserPlus className="h-4 w-4 mr-2" />
                 Sign Up
               </Button>
@@ -96,5 +93,6 @@ export default function Navbar() {
         </div>
       </div>
     </header>
-  );
+  )
 }
+
