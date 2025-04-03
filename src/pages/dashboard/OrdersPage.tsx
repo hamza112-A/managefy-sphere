@@ -156,6 +156,10 @@ export default function OrdersPage() {
                                   src={item.product.imageUrl || "/placeholder.svg"}
                                   alt={item.product.name}
                                   className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    // Replace with placeholder if image fails to load
+                                    e.currentTarget.src = "/placeholder.svg?height=40&width=40"
+                                  }}
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">

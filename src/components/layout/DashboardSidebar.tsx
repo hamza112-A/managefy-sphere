@@ -1,104 +1,113 @@
+"use client"
 
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/contexts/AuthContext';
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  ClipboardList, 
-  Users, 
-  AlertTriangle, 
-  BarChart, 
-  Settings 
-} from 'lucide-react';
-import { UserRole } from '@/lib/types';
+import type React from "react"
+import { useEffect, useState } from "react"
+import { Link, useLocation } from "react-router-dom"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { cn } from "@/lib/utils"
+import { useAuth } from "@/contexts/AuthContext"
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  ClipboardList,
+  Users,
+  AlertTriangle,
+  BarChart,
+  Settings,
+  Star,
+} from "lucide-react"
+import type { UserRole } from "@/lib/types"
 
 interface SidebarLink {
-  title: string;
-  href: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  roles: UserRole[];
+  title: string
+  href: string
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  roles: UserRole[]
 }
 
 export default function DashboardSidebar() {
-  const { pathname } = useLocation();
-  const { userData, getUserRole } = useAuth();
-  const [userRole, setUserRole] = useState<UserRole>('user');
-  
+  const { pathname } = useLocation()
+  const { userData, getUserRole, isAdminManager } = useAuth()
+  const [userRole, setUserRole] = useState<UserRole>("user")
+
   // Update user role whenever userData changes
   useEffect(() => {
-    const role = getUserRole();
-    console.log('Dashboard sidebar - getUserRole returned:', role);
-    console.log('Dashboard sidebar - User data:', userData);
-    setUserRole(role);
-  }, [userData, getUserRole]);
+    const role = getUserRole()
+    console.log("Dashboard sidebar - getUserRole returned:", role)
+    console.log("Dashboard sidebar - User data:", userData)
+    setUserRole(role)
+  }, [userData, getUserRole])
 
   const links: SidebarLink[] = [
     {
-      title: 'Overview',
-      href: '/dashboard',
+      title: "Overview",
+      href: "/dashboard",
       icon: LayoutDashboard,
-      roles: ['user', 'manager'],
+      roles: ["user", "manager"],
     },
     {
-      title: 'Products',
-      href: '/dashboard/products',
+      title: "Products",
+      href: "/dashboard/products",
       icon: Package,
-      roles: ['user', 'manager'],
+      roles: ["user", "manager"],
     },
     {
-      title: 'Cart',
-      href: '/dashboard/cart',
+      title: "Cart",
+      href: "/dashboard/cart",
       icon: ShoppingCart,
-      roles: ['user', 'manager'],
+      roles: ["user", "manager"],
     },
     {
-      title: 'Orders',
-      href: '/dashboard/orders',
+      title: "Orders",
+      href: "/dashboard/orders",
       icon: ClipboardList,
-      roles: ['user', 'manager'],
+      roles: ["user", "manager"],
     },
     {
-      title: 'Inventory',
-      href: '/dashboard/inventory',
+      title: "Inventory",
+      href: "/dashboard/inventory",
       icon: Package,
-      roles: ['manager'],
+      roles: ["manager"],
     },
     {
-      title: 'User Management',
-      href: '/dashboard/users',
+      title: "User Management",
+      href: "/dashboard/users",
       icon: Users,
-      roles: ['manager'],
+      roles: ["manager"],
     },
     {
-      title: 'Stock Alerts',
-      href: '/dashboard/alerts',
+      title: "Stock Alerts",
+      href: "/dashboard/alerts",
       icon: AlertTriangle,
-      roles: ['manager'],
+      roles: ["manager"],
     },
     {
-      title: 'Reports',
-      href: '/dashboard/reports',
+      title: "Reports",
+      href: "/dashboard/reports",
       icon: BarChart,
-      roles: ['manager'],
+      roles: ["manager"],
     },
     {
-      title: 'Settings',
-      href: '/dashboard/settings',
+      title: "Settings",
+      href: "/dashboard/settings",
       icon: Settings,
-      roles: ['user', 'manager'],
+      roles: ["user", "manager"],
     },
-  ];
+  ]
 
   // Filter links based on user role
-  const filteredLinks = links.filter(link => 
-    link.roles.includes(userRole as UserRole)
-  );
+  const filteredLinks = links.filter((link) => link.roles.includes(userRole as UserRole))
 
-  console.log('Filtered links for role', userRole, ':', filteredLinks.map(l => l.title));
+  console.log(
+    "Filtered links for role",
+    userRole,
+    ":",
+    filteredLinks.map((l) => l.title),
+  )
+
+  // Check if current user is admin
+  const isAdmin = isAdminManager()
 
   return (
     <div className="flex flex-col h-screen border-r">
@@ -116,7 +125,7 @@ export default function DashboardSidebar() {
               to={link.href}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-accent",
-                pathname === link.href ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+                pathname === link.href ? "bg-accent text-accent-foreground" : "text-muted-foreground",
               )}
             >
               <link.icon className="h-4 w-4" />
@@ -126,10 +135,19 @@ export default function DashboardSidebar() {
         </div>
       </ScrollArea>
       <div className="p-4 border-t">
-        <p className="text-sm text-muted-foreground">
-          Logged in as: <span className="font-medium">{userRole}</span>
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Logged in as: <span className="font-medium">{userRole}</span>
+          </p>
+          {isAdmin && (
+            <div className="flex items-center">
+              <Star className="h-4 w-4 text-amber-500 mr-1" />
+              <span className="text-xs text-amber-600">Admin</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  );
+  )
 }
+

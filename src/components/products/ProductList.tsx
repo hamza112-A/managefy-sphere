@@ -54,6 +54,11 @@ export function ProductList({ onEdit }: ProductListProps) {
                 src={product.imageUrl || "/placeholder.svg"}
                 alt={product.name}
                 className="object-cover w-full h-full"
+                onError={(e) => {
+                  console.error("Image failed to load:", product.imageUrl)
+                  // Replace with placeholder if image fails to load
+                  e.currentTarget.src = "/placeholder.svg?height=200&width=300"
+                }}
               />
             ) : (
               <div className="flex items-center justify-center w-full h-full bg-muted">

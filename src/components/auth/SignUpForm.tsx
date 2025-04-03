@@ -1,55 +1,53 @@
+"use client"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useAuth } from "@/contexts/AuthContext"
+import { UserPlus } from "lucide-react"
 
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuth } from '@/contexts/AuthContext';
-import { UserPlus } from 'lucide-react';
-import { UserRole } from '@/lib/types';
+const formSchema = z
+  .object({
+    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+    email: z.string().email({ message: "Please enter a valid email" }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  })
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
-  email: z.string().email({ message: 'Please enter a valid email' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-  confirmPassword: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-  role: z.enum(['user', 'manager']).default('user'),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof formSchema>
 
 export function SignUpForm() {
-  const { signUp } = useAuth();
-  const navigate = useNavigate();
-  
+  const { signUp } = useAuth()
+  const navigate = useNavigate()
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      role: 'user',
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
-  });
+  })
 
   const onSubmit = async (values: FormValues) => {
     try {
-      await signUp(values.email, values.password, values.name, values.role as UserRole);
-      navigate('/dashboard');
+      // Always sign up as a regular user - role management is done by admins
+      await signUp(values.email, values.password, values.name, "user")
+      navigate("/dashboard")
     } catch (error) {
       // Error is already handled in the signUp function
-      console.error('Sign up failed', error);
+      console.error("Sign up failed", error)
     }
-  };
+  }
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -112,30 +110,6 @@ export function SignUpForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Account Type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an account type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="user">Regular User</SelectItem>
-                      <SelectItem value="manager">Manager</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? (
                 <span className="flex items-center gap-2">Signing Up...</span>
@@ -151,12 +125,13 @@ export function SignUpForm() {
       </CardContent>
       <CardFooter className="flex justify-center">
         <p className="text-sm text-muted-foreground">
-          Already have an account?{' '}
-          <Button variant="link" className="p-0" onClick={() => navigate('/signin')}>
+          Already have an account?{" "}
+          <Button variant="link" className="p-0" onClick={() => navigate("/signin")}>
             Sign In
           </Button>
         </p>
       </CardFooter>
     </Card>
-  );
+  )
 }
+

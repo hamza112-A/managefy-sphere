@@ -141,9 +141,16 @@ export function AddProductForm({ onSuccess }: { onSuccess?: () => void }) {
             <FormItem>
               <FormLabel>Image URL (optional)</FormLabel>
               <FormControl>
-                <Input placeholder="https://example.com/image.jpg" {...field} />
+                <Input
+                  placeholder="https://example.com/image.jpg"
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e.target.value.trim())
+                  }}
+                />
               </FormControl>
               <FormMessage />
+              <p className="text-xs text-muted-foreground mt-1">Enter a direct URL to an image (JPG, PNG, etc.)</p>
             </FormItem>
           )}
         />

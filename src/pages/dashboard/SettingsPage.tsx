@@ -17,7 +17,7 @@ import { toast } from "sonner"
 import { User, Bell, Shield, LogOut } from "lucide-react"
 
 export default function SettingsPage() {
-  const { currentUser, userData, signOut } = useAuth()
+  const { currentUser, userData, signOut, getUserRole } = useAuth()
   const [activeTab, setActiveTab] = useState("profile")
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({

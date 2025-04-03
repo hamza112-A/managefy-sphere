@@ -106,6 +106,10 @@ export default function CartPage() {
                           src={item.product.imageUrl || "/placeholder.svg"}
                           alt={item.product.name}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            // Replace with placeholder if image fails to load
+                            e.currentTarget.src = "/placeholder.svg?height=80&width=80"
+                          }}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
